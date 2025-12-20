@@ -65,11 +65,15 @@ public class ProfileController {
             // 파일명에 "../"가 포함되어 있는지 확인하지 않습니다.
             // 확장자 검증도 없습니다.
 
-            Path destinationFile = this.uploadLocation.resolve(Paths.get(filename)).normalize().toAbsolutePath();
-
-            try (var inputStream = file.getInputStream()) {
-                Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
+            // WAR 배포 호환성 수정: 실제 웹 루트 경로 사용
+            String webRootPath = session.getServletContext().getRealPath("/");
+            File uploadDir = new File(webRootPath, "uploads");
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
             }
+
+            File destinationFile = new File(uploadDir, filename);
+            file.transferTo(destinationFile);
 
             String fileUrl = "/uploads/" + filename;
             model.addAttribute("message", "파일 업로드 성공: " + filename + "!");
