@@ -1,0 +1,19 @@
+{
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.import.gradle.wrapper.enabled": false,
+    "java.import.gradle.version": "8.5",
+    "java.project.sourcePaths": [
+        "src/main/java"
+    ],
+    "java.dependency.packagePresentation": "hierarchical",
+    "java.jdt.ls.java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot",
+    "java.debug.settings.onBuildFailureProceed": true,
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-17",
+            "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot",
+            "default": true
+        }
+    ],
+    "java.compile.nullAnalysis.mode": "automatic"
+}

@@ -1,0 +1,21 @@
+2025-12-21 02:14:57.474792+09:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
+2025-12-21 02:32:30.883438+09:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "INFORMATION_SCHEMA" not found; SQL statement:
+select * from information_schema [42102-224]
+2025-12-21 02:32:47.577343+09:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "INFORMATION_SCHEMA" not found; SQL statement:
+select * from INFORMATION_SCHEMA [42102-224]
+2025-12-21 02:34:04.938730+09:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "select * from INFORMATION_SCHEMA.[*]TABLE"; expected "identifier"; SQL statement:
+select * from INFORMATION_SCHEMA.TABLE [42001-224]
+2025-12-21 03:01:17.959928+09:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
+2025-12-21 03:01:19.962288+09:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
+2025-12-21 03:01:20.646962+09:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
+2025-12-21 03:01:24.149463+09:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
+2025-12-21 03:01:29.523829+09:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
