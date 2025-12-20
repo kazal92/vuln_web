@@ -6,8 +6,10 @@ SQL Injection, XSS, IDOR, SSRF, XXE, Insecure Deserialization 등 다양한 웹 
 ## 🚀 실행 방법
 
 1.  프로젝트 루트에서 터미널을 엽니다.
-2.  `./gradlew bootRun` (Linux/Mac) 또는 `.\gradlew bootRun` (Windows) 명령어를 실행합니다.
-3.  브라우저에서 `http://localhost:8080`으로 접속합니다.
+2.  **기본 실행 (JAR)**: `./gradlew bootRun` (권장)
+3.  **WAR 빌드 (Tomcat 배포용)**: `./gradlew -b build-war.gradle war`
+    - 생성된 `.war` 파일을 외장 톰캣에 배포하면 리얼한 환경에서 테스트 가능합니다.
+4.  브라우저에서 `http://localhost:8080`으로 접속합니다.
 
 ## 💀 취약점 목록 (Vulnerability List)
 
