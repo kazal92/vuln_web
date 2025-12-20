@@ -14,8 +14,17 @@ import org.springframework.context.annotation.Bean;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+
 @SpringBootApplication
-public class VulnMallApplication {
+public class VulnMallApplication extends SpringBootServletInitializer {
+
+    // WAR 배포를 위한 설정 (Servlet Initializer)
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(VulnMallApplication.class);
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(VulnMallApplication.class, args);
