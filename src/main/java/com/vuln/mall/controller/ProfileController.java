@@ -102,12 +102,41 @@ public class ProfileController {
     }
 
     @GetMapping("/file/download")
-    public void downloadFile(@RequestParam("name") String filename, HttpServletResponse response) {
+    public void downloadFile(@RequestParam("name") String filename, HttpServletRequest request,
+            HttpServletResponse response) {
         // 취약점: 임의 파일 다운로드 (Arbitrary File Download) - 경로 탐색
         // 'name' 파라미터에 대한 검증이 없습니다. "../"를 사용하여 상위 디렉토리로 이동할 수 있습니다.
         // 예: /file/download?name=../../../../Windows/win.ini
 
-        File file = new File(UPLOAD_DIR_STR + filename);
+        // WAR 배포 호환성: 실제 웹 루트 경로 사용
+        String webRootPath = request.getSession().getServletContext().getRealPath("/");
+        File uploadDir = new File(webRootPath, "uploads");
+
+        // Ensure upload directory exists
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs();
+        }
+
+        // 1. 편의기능: 샘플 파일이 없으면 자동 생성 (사용자 요청 대응)
+        if ("sample_product.xml".equals(filename)) {
+            File sampleFile = new File(uploadDir, "sample_product.xml");
+            if (!sampleFile.exists()) {
+                try (java.io.FileWriter writer = new java.io.FileWriter(sampleFile)) {
+                    writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+                    writer.write("<products>\n");
+                    writer.write("  <product>\n");
+                    writer.write("    <name>Sample Product</name>\n");
+                    writer.write("    <price>1000</price>\n");
+                    writer.write("    <description>This is a sample product.</description>\n");
+                    writer.write("  </product>\n");
+                    writer.write("</products>");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        File file = new File(uploadDir, filename); // No validation on filename
 
         if (file.exists()) {
             response.setContentType("application/octet-stream");
@@ -122,6 +151,16 @@ public class ProfileController {
                     os.write(buffer, 0, len);
                 }
                 os.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            // Debugging aid for Path Traversal
+            // 공격자가 경로를 유추할 수 있도록 절대 경로를 에러 메시지에 포함 (취약점 실습용)
+            String errorMsg = "File not found at: " + file.getAbsolutePath();
+            System.out.println("DEBUG: " + errorMsg);
+            try {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, errorMsg);
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{fragments/layout}">
+
+<head>
+    <title>게시판 - Securecorp Mall</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container mt-5 fade-in">
+        <!-- Header -->
+        <div class="text-center mb-5">
+            <h1 class="fw-bold text-dark mb-2 display-6">커뮤니티 게시판</h1>
+            <p class="text-muted lead">자유롭게 소통하고 파일을 공유하세요.</p>
+        </div>
+
+        <!-- Board List -->
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="card-header bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold text-primary"><i class="bi bi-list-columns-reverse me-2"></i>최근 게시글</h5>
+                <div th:if="${session.user != null}">
+                    <a href="/board/write" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                        <i class="bi bi-pencil-fill me-1"></i> 새 글 작성
+                    </a>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-muted small text-uppercase fw-bold">
+                        <tr>
+                            <th class="ps-4 py-3 border-0 text-center" style="width: 8%">No</th>
+                            <th class="py-3 border-0">제목</th>
+                            <th class="py-3 border-0" style="width: 15%">작성자</th>
+                            <th class="py-3 border-0 text-center" style="width: 15%">작성일</th>
+                            <th class="pe-4 py-3 border-0 text-center" style="width: 10%">조회</th>
+                        </tr>
+                    </thead>
+                    <tbody class="border-top-0">
+                        <tr th:if="${boards.empty}">
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-3 opacity-50"></i>
+                                아직 작성된 게시글이 없습니다.
+                            </td>
+                        </tr>
+                        <tr th:each="board : ${boards}" class="transition-transform">
+                            <td class="ps-4 text-center text-muted fw-bold small" th:text="${board.id}">1</td>
+                            <td>
+                                <a th:href="@{/board/view/{id}(id=${board.id})}"
+                                    class="text-decoration-none text-dark fw-medium stretched-link d-block text-truncate"
+                                    style="max-width: 400px;">
+                                    <span th:text="${board.title}">제목</span>
+
+                                    <!-- Badges -->
+                                    <i th:if="${board.originalFileName != null}"
+                                        class="bi bi-paperclip text-muted ms-2 small" title="첨부파일 있음"></i>
+
+                                    <span th:if="${!board.comments.empty}"
+                                        class="badge bg-primary bg-opacity-10 text-primary rounded-pill ms-2 small">
+                                        <i class="bi bi-chat-dots-fill me-1"></i>[[${board.comments.size()}]]
+                                    </span>
+                                </a>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center text-muted"
+                                        style="width: 32px; height: 32px; font-size: 0.8rem;">
+                                        <i class="bi bi-person-fill"></i>
+                                    </div>
+                                    <span class="small fw-bold text-secondary" th:text="${board.author}">User</span>
+                                </div>
+                            </td>
+                            <td class="text-center text-muted small">
+                                <span class="badge bg-light text-secondary fw-normal border">
+                                    <i class="bi bi-clock me-1"></i>[[${#temporals.format(board.createdDate,
+                                    'yyyy-MM-dd')}]]
+                                </span>
+                            </td>
+                            <td class="pe-4 text-center">
+                                <span class="text-muted small fw-bold">
+                                    <i class="bi bi-eye me-1"></i>[[${board.viewCount}]]
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer Pagination/Info (Optional visual) -->
+            <div class="card-footer bg-white border-0 py-3 text-center text-muted small">
+                Showing all posts
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

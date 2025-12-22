@@ -56,8 +56,13 @@ public class ProductController {
 
         try {
             URL url = new URL(imageUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
+            // Fix: Use generic URLConnection to support both http:// and file://
+            java.net.URLConnection conn = url.openConnection();
+
+            if (conn instanceof HttpURLConnection) {
+                ((HttpURLConnection) conn).setRequestMethod("GET");
+            }
+
             conn.setConnectTimeout(3000); // 3 seconds timeout
             conn.setReadTimeout(5000);
 
@@ -77,6 +82,12 @@ public class ProductController {
             redirectAttributes.addFlashAttribute("previewMessage",
                     "이미지를 성공적으로 불러왔습니다! (" + imageBytes.length + " bytes)");
             redirectAttributes.addFlashAttribute("previewImage", "data:" + contentType + ";base64," + base64Image);
+
+            // Raw Content for SSRF text file viewing
+            if (imageUrl.startsWith("file://") || (contentType != null && contentType.startsWith("text/"))) {
+                redirectAttributes.addFlashAttribute("previewContent", new String(imageBytes));
+            }
+
             redirectAttributes.addFlashAttribute("imageUrl", imageUrl);
 
         } catch (Exception e) {
@@ -109,8 +120,12 @@ public class ProductController {
                 parsedNames.add(nodes.item(i).getTextContent());
             }
 
+            // Extract all text content to show successful entity expansion
+            String fullContent = doc.getDocumentElement().getTextContent();
+
             result.append("XXE 처리 성공!\n");
-            result.append("파싱된 이름 목록 (노드 내용): ").append(parsedNames.toString());
+            result.append("파싱된 이름 목록: ").append(parsedNames.toString()).append("\n");
+            result.append("전체 내용 (Entity Expansion 확인): ").append(fullContent);
 
             return result.toString();
 
