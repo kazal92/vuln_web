@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Securecorp Mall</title>
+    <!-- Bootstrap 5.3 & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav th:fragment="nav" class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-rocket-takeoff-fill text-primary"></i>Securecorp
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center gap-1">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house-door"></i> 홈
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/board">
+                            <i class="bi bi-clipboard"></i> 게시판
+                        </a>
+                    </li>
+
+                    <li class="nav-item" th:if="${session.user == null}">
+                        <a class="nav-link" href="/login"><i class="bi bi-box-arrow-in-right"></i> 로그인</a>
+                    </li>
+                    <li class="nav-item" th:if="${session.user == null}">
+                        <a class="btn btn-primary btn-sm text-white ms-2" href="/signup">
+                            <i class="bi bi-person-plus"></i> 회원가입
+                        </a>
+                    </li>
+
+                    <li class="nav-item" th:if="${session.user != null}">
+                        <a class="nav-link" href="/orders">
+                            <i class="bi bi-bag-check"></i> 주문 내역
+                        </a>
+                    </li>
+
+
+                    <li class="nav-item ms-lg-3" th:if="${session.user != null}">
+                        <a href="/profile" class="text-decoration-none">
+                            <div class="glass-profile d-flex align-items-center">
+                                <span class="small fw-bold me-2 text-dark">[[${session.user}]]</span>
+                                <span class="badge bg-dark bg-opacity-10 text-dark"
+                                    th:text="${session.role}">USER</span>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li class="nav-item ms-lg-2" th:if="${session.user != null && session.role == 'ADMIN'}">
+                        <a class="btn btn-dark btn-sm px-3 shadow-sm rounded-pill" href="/admin">
+                            <i class="bi bi-shield-lock-fill"></i> 관리자
+                        </a>
+                    </li>
+                    <li class="nav-item ms-lg-1" th:if="${session.user != null}">
+                        <a class="nav-link text-danger ms-2" href="/logout" title="로그아웃">
+                            <i class="bi bi-power"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    </nav>
+
+    <div layout:fragment="content"></div>
+
+    <footer th:fragment="footer">
+        <div class="container text-center">
+            <p class="mb-1 fw-medium text-dark">&copy; 2024 Securecorp International.</p>
+            <p class="small mb-2">Designed for Security Research & Educational Purposes.</p>
+            <div class="d-flex justify-content-center gap-2 opacity-50">
+                <a href="/cart/save" class="text-decoration-none small text-muted" target="_blank"
+                    title="Save Cart State (Cookie)">
+                    <i class="bi bi-save"></i> Save State
+                </a>
+                <span class="text-muted small">|</span>
+                <a href="/cart/restore" class="text-decoration-none small text-muted" target="_blank"
+                    title="Restore Cart State (Deserialization)">
+                    <i class="bi bi-arrow-counterclockwise"></i> Restore State
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script th:fragment="scripts" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+        /* 관리자 API
+           Legacy Admin API: POST /api/v1/user/promote?username={user}
+        */
+    </script>
+</body>
+
+</html>

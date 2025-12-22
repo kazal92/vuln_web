@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head}"></head>
+
+<body>
+
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
+
+    <div class="container fade-in mt-5">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h2 class="fw-bold mb-0">내 주문 내역</h2>
+            <div class="d-flex align-items-center gap-2">
+                <!-- Insecure Deserialization Actions -->
+                <a href="/cart/save" class="btn btn-outline-dark btn-sm rounded-pill px-3 shadow-sm" target="_blank">
+                    <i class="bi bi-save me-1"></i> 장바구니 저장
+                </a>
+                <a href="/cart/restore" class="btn btn-outline-danger btn-sm rounded-pill px-3 shadow-sm"
+                    target="_blank">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> 장바구니 복원
+                </a>
+                <span class="badge bg-white text-dark border shadow-sm rounded-pill px-3 py-2 ms-2">
+                    전체 주문: <span th:text="${orders.size()}">0</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm overflow-hidden rounded-4">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle text-nowrap">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="py-3 ps-4 text-muted small text-uppercase fw-bold">주문 ID</th>
+                            <th class="py-3 text-muted small text-uppercase fw-bold">날짜</th>
+                            <th class="py-3 text-muted small text-uppercase fw-bold">총 금액</th>
+                            <th class="py-3 text-muted small text-uppercase fw-bold">상태</th>
+                            <th class="py-3 pe-4 text-end text-muted small text-uppercase fw-bold">작업</th>
+                        </tr>
+                    </thead>
+                    <tbody class="border-top-0">
+                        <tr th:each="order : ${orders}">
+                            <td class="ps-4 fw-bold text-primary" th:text="${'#' + order.id}">#1</td>
+                            <td class="text-secondary"
+                                th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}">Date</td>
+                            <td class="fw-bold" th:text="${'₩' + #numbers.formatInteger(order.totalPrice, 0, 'COMMA')}">
+                                Price</td>
+                            <td>
+                                <span
+                                    th:class="${order.status == 'ORDERED' ? 'badge bg-success-subtle text-success border border-success-subtle rounded-pill' : 'badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill'}"
+                                    th:text="${order.status}">Status</span>
+                            </td>
+                            <td class="pe-4 text-end">
+                                <a th:href="@{/order/detail(id=${order.id})}"
+                                    class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                    상세보기 <i class="bi bi-chevron-right small"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${orders.isEmpty()}">
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-cart-x display-4 mb-3 d-block opacity-25"></i>
+                                주문 내역이 없습니다.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+
+</html>
