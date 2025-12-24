@@ -2266,3 +2266,5 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/ljh/Des
 org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
 2025-12-22 16:13:59.868761+09:00 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
+2025-12-23 11:00:06.888981+09:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]

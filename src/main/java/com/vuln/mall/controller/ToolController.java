@@ -44,28 +44,17 @@ public class ToolController {
                     root);
             context.addPropertyAccessor(new org.springframework.context.expression.MapAccessor());
 
-            // ${...} 마커가 있으면 처리
-            if (template.contains("${")) {
-                java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("\\$\\{([^\\}]+)\\}");
-                java.util.regex.Matcher matcher = pattern.matcher(template);
-                java.lang.StringBuffer sb = new java.lang.StringBuffer();
-                while (matcher.find()) {
-                    String expression = matcher.group(1).trim();
-                    try {
-                        Object value = parser.parseExpression(expression).getValue(context);
-                        matcher.appendReplacement(sb,
-                                value != null ? java.util.regex.Matcher.quoteReplacement(value.toString()) : "");
-                    } catch (Exception e) {
-                        matcher.appendReplacement(sb, "[파싱 오류]");
-                    }
-                }
-                matcher.appendTail(sb);
-                result = sb.toString();
-            } else {
-                result = template; // 템플릿 마커가 없으면 그대로 반환
-            }
+            // 표준 TemplateParserContext를 사용하여 #{...} 내부를 SpEL로 평가
+            // 가장 기본적이고 교과서적인 형태의 취약Thymeleaf점 코드입니다.
+            result = parser.parseExpression(template, new org.springframework.expression.common.TemplateParserContext())
+                    .getValue(context, String.class);
         } catch (Exception e) {
-            result = "서버 내부 오류가 발생했습니다.";
+            // 디버깅을 위해 상세 에러 메시지 출력
+            result = "오류 발생: " + e.getMessage();
+            if (e.getCause() != null) {
+                result += " (원인: " + e.getCause().getMessage() + ")";
+            }
+            e.printStackTrace(); // 서버 로그에도 출력
         }
 
         model.addAttribute("template", template);
