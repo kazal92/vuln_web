@@ -98,6 +98,15 @@ SQL Injection, XSS, IDOR, SSRF, XXE, Insecure Deserialization 등 다양한 웹 
 - **위치**: `/actuator`, `/h2-console`
 - **설명**: Spring Actuator 엔드포인트와 H2 데이터베이스 콘솔이 인증 없이 외부에 노출되어 있습니다. 이를 통해 서버 내부 정보를 획득하거나 조작할 수 있습니다.
 
+### 16. RFD (Reflected File Download)
+- **관련 파일**: `ProductController.java`
+- **위치**: `/product/search` (검색 결과 내보내기 기능)
+- **설명**: 사용자가 입력한 파일명(`filename`)과 검색어(`q`)가 검증 없이 다운로드되는 파일의 이름과 내용에 반영됩니다. 공격자는 이를 악용해 `.bat` 같은 실행 파일을 다운로드하게 만들고, 내부에 시스템 명령어를 주입할 수 있습니다.
+- **테스트**: 
+    1. `/product/search` 접속 후 '결과 내보내기' 버튼 확인.
+    2. URL을 조작하여 접속: `/api/export/products?q=calc||&filename=game.bat`
+    3. 다운로드된 `game.bat` 실행 시 계산기 실행 확인.
+
 ---
 
 ## ⚠️ 주의사항 (Disclaimer)

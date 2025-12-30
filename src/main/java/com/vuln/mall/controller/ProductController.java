@@ -32,6 +32,49 @@ public class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
+    @GetMapping("/product/search")
+    public String searchResult(@RequestParam(name = "q", defaultValue = "") String query, Model model) {
+        model.addAttribute("query", query);
+
+        // Mock Data for Search (실습용)
+        List<Product> searchResults = new ArrayList<>();
+        if (!query.isEmpty()) {
+            Product p1 = new Product();
+            p1.setId(101L);
+            p1.setName("Premium " + query);
+            p1.setPrice(1200000);
+            p1.setDescription("Best " + query + " in the market.");
+            p1.setImageUrl("/images/product_1.jpg");
+            searchResults.add(p1);
+        }
+
+        model.addAttribute("products", searchResults);
+        return "search_result";
+    }
+
+    /**
+     * [VULNERABILITY] Reflected File Download (RFD)
+     * 검색 결과를 파일로 내보내는 기능.
+     * 사용자가 입력한 filename을 검증 없이 헤더에 사용하고, query 내용을 파일 본문에 포함함.
+     * 공격: filename=update.bat&q=calc||
+     */
+    @GetMapping("/api/export/products")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public void exportProducts(@RequestParam(value = "q", defaultValue = "") String query,
+            @RequestParam(value = "filename", defaultValue = "products.csv") String filename,
+            jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
+
+        // 1. Content-Disposition 헤더 조작 (파일명 변조 가능)
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+
+        // 2. 파일 내용 생성 (사용자 입력 반영 -> 명령어 주입 가능)
+        String content = "Product ID,Name,Price,Description\n";
+        content += "101,Premium " + query + ",1200000,Best item\n";
+
+        response.setContentType("text/plain; charset=UTF-8");
+        response.getWriter().write(content);
+    }
+
     @GetMapping("/product/detail")
     public String productDetail(@RequestParam Long id, Model model) {
         Product product = productRepository.findById(id).orElse(null);
