@@ -56,6 +56,10 @@ public class UserController {
                 userCookie.setPath("/");
                 response.addCookie(userCookie);
 
+                Cookie usernameCookie = new Cookie("username", rs.getString("username"));
+                usernameCookie.setPath("/");
+                response.addCookie(usernameCookie);
+
                 Cookie roleCookie = new Cookie("role", role);
                 roleCookie.setPath("/");
                 response.addCookie(roleCookie);

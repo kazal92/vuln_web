@@ -107,6 +107,17 @@ SQL Injection, XSS, IDOR, SSRF, XXE, Insecure Deserialization 등 다양한 웹 
     2. URL을 조작하여 접속: `/api/export/products?q=calc||&filename=game.bat`
     3. 다운로드된 `game.bat` 실행 시 계산기 실행 확인.
 
+### 17. Race Condition & IDOR (경쟁 상태 & 부적절한 객체 참조)
+- **관련 파일**: `CouponController.java`
+- **위치**: `/event/coupon` (선착순 쿠폰 발급)
+- **설명**: 
+    - **Race Condition**: "이미 발급받았는지 확인"하는 시점과 "발급 처리"하는 시점 사이에 락(Lock)이 없습니다. 이를 이용해 스크립트 등으로 동시에 많은 요청을 보내면(Race Condition), 1인 1매 제한을 우회하여 여러 장의 쿠폰을 발급받을 수 있습니다.
+    - **IDOR**: `userId` 파라미터를 검증 없이 사용하여, 타인의 계정(ID)으로 쿠폰을 대신 발급받거나 가로챌 수 있습니다.
+- **테스트**: 
+    1. `/event/coupon` 접속.
+    2. 발급 요청 시 `userId`를 다른 숫자로 변경하여 전송 (IDOR).
+    3. Burp Suite (Turbo Intruder) 등을 이용해 동시 다발적인 요청 전송 (Race Condition).
+
 ---
 
 ## ⚠️ 주의사항 (Disclaimer)
