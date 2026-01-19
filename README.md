@@ -1,6 +1,6 @@
-# 🛡️ 취약한 쇼핑몰 (Securecorp몰)
+# 🛡️ 취약한 쇼핑몰
 
-이 프로젝트는 Spring Boot로 구축된 **고의적으로 보안이 취약한** 쇼핑몰(Securecorp몰) 애플리케이션입니다.
+이 프로젝트는 Spring Boot로 구축된 **고의적으로 보안이 취약한** 쇼핑몰 애플리케이션입니다.
 SQL Injection, XSS, IDOR, SSRF, XXE, Insecure Deserialization 등 다양한 웹 애플리케이션 보안 취약점을 실습하고 테스트할 수 있도록 설계되었습니다.
 
 ## 🚀 실행 방법
