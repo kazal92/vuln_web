@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head}"></head>
+
+<body>
+
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
+
+    <div class="container fade-in mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h2 class="fw-bold mb-0">주문 상세</h2>
+                    <a href="/orders" class="btn btn-light rounded-pill px-3">
+                        <i class="bi bi-arrow-left me-1"></i> 목록으로
+                    </a>
+                </div>
+
+                <div class="card border-0 shadow-lg overflow-hidden rounded-4">
+                    <div class="card-header bg-white border-bottom border-light p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted small text-uppercase fw-bold">주문 번호</span>
+                            <span class="h5 fw-bold text-primary mb-0" th:text="${'#' + order.id}">#1</span>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-4">
+                            <div class="col-sm-6">
+                                <p class="text-muted small text-uppercase fw-bold mb-1">상품 정보</p>
+                                <p class="fs-5 fw-bold mb-1">Product ID: <span th:text="${order.productId}"></span></p>
+                                <p class="text-muted">수량: <span th:text="${order.quantity}"></span>개</p>
+                            </div>
+                            <div class="col-sm-6 text-sm-end">
+                                <p class="text-muted small text-uppercase fw-bold mb-1">결제 금액</p>
+                                <p class="fs-4 fw-bold text-dark"
+                                    th:text="${'₩' + #numbers.formatInteger(order.totalPrice, 0, 'COMMA')}">₩0</p>
+                            </div>
+                            <div class="col-12">
+                                <hr class="text-light">
+                            </div>
+                            <div class="col-sm-6">
+                                <p class="text-muted small text-uppercase fw-bold mb-1">주문 일시</p>
+                                <p class="mb-0" th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm:ss')}">
+                                    Date</p>
+                            </div>
+                            <div class="col-sm-6 text-sm-end">
+                                <p class="text-muted small text-uppercase fw-bold mb-1">주문 상태</p>
+                                <span
+                                    th:class="${order.status == 'ORDERED' ? 'badge bg-success-subtle text-success border border-success-subtle rounded-pill fs-6 px-3' : 'badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill fs-6 px-3'}"
+                                    th:text="${order.status}">Status</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 pt-3 border-top">
+                            <div th:if="${order.status == 'ORDERED'}" class="text-end">
+                                <!-- VULNERABILITY: CSRF -->
+                                <p class="small text-muted mb-2"><i class="bi bi-info-circle"></i> 주문 취소는 즉시 처리됩니다.</p>
+                                <a th:href="@{/order/cancel(id=${order.id})}"
+                                    class="btn btn-danger rounded-pill px-4 shadow-sm">
+                                    <i class="bi bi-x-circle me-1"></i> 주문 취소
+                                </a>
+                            </div>
+                            <div th:if="${order.status == 'CANCELLED'}" class="text-end">
+                                <button class="btn btn-secondary rounded-pill px-4" disabled>
+                                    <i class="bi bi-x-circle-fill me-1"></i> 취소된 주문
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+
+</html>

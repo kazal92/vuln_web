@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{fragments/layout}">
+
+<head>
+    <title>글 보기 - Securecorp Mall</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container mt-5 fade-in">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+
+                <!-- Post -->
+                <div class="card border-0 shadow-lg rounded-4 mb-4 overflow-hidden">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="d-flex justify-content-between align-items-start mb-4 border-bottom pb-4">
+                            <div>
+                                <h2 class="fw-bold mb-3 text-wrap text-break text-dark" th:text="${board.title}">Title
+                                </h2>
+                                <div class="d-flex align-items-center gap-3 text-muted small">
+                                    <span class="d-flex align-items-center gap-1">
+                                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center"
+                                            style="width: 24px; height: 24px;">
+                                            <i class="bi bi-person-fill"></i>
+                                        </div>
+                                        <span th:text="${board.author}" class="fw-bold text-secondary">User</span>
+                                    </span>
+                                    <span class="opacity-25">|</span>
+                                    <span><i class="bi bi-calendar3 me-1"></i><span
+                                            th:text="${#temporals.format(board.createdDate, 'yyyy.MM.dd HH:mm')}">Date</span></span>
+                                </div>
+                            </div>
+                            <div class="text-nowrap ms-3">
+                                <span
+                                    class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 fw-normal">
+                                    <i class="bi bi-eye me-1"></i>조회 <span th:text="${board.viewCount}"
+                                        class="fw-bold">0</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- File -->
+                        <div th:if="${board.originalFileName != null}"
+                            class="mb-4 bg-light p-3 rounded-3 border d-inline-block">
+                            <a th:href="@{/board/download/{id}(id=${board.id})}"
+                                class="text-decoration-none text-dark d-flex align-items-center gap-2">
+                                <div class="rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center"
+                                    style="width: 36px; height: 36px;">
+                                    <i class="bi bi-paperclip text-primary"></i>
+                                </div>
+                                <span th:text="${board.originalFileName}" class="fw-medium">File</span>
+                                <i class="bi bi-download ms-2 text-muted small"></i>
+                            </a>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="text-break mb-5 lh-lg"
+                            style="min-height: 200px; white-space: pre-wrap; font-size: 1.05rem;"
+                            th:utext="${board.content}">Content</div>
+
+                        <!-- Actions -->
+                        <div class="d-flex justify-content-end gap-2 border-top pt-4">
+                            <a th:href="@{/board/edit/{id}(id=${board.id})}"
+                                class="btn btn-outline-secondary rounded-pill px-4">수정</a>
+                            <form th:action="@{/board/delete/{id}(id=${board.id})}" method="post"
+                                onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                <button type="submit" class="btn btn-outline-danger rounded-pill px-4">삭제</button>
+                            </form>
+                            <a href="/board" class="btn btn-dark rounded-pill px-5 shadow-sm">목록</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comments -->
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-header bg-transparent border-0 pt-4 px-4 px-lg-5">
+                        <h5 class="fw-bold mb-0">댓글 <span class="text-primary"
+                                th:text="${board.comments.size()}">0</span></h5>
+                    </div>
+
+                    <div class="card-body px-4 px-lg-5 pb-5">
+                        <!-- List -->
+                        <div class="d-flex flex-column gap-3 mb-4">
+                            <div th:each="comment : ${board.comments}" class="d-flex gap-3">
+                                <div class="flex-shrink-0">
+                                    <i class="bi bi-person-circle fs-3 text-muted"></i>
+                                </div>
+                                <div class="flex-grow-1 bg-light rounded-3 p-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="fw-bold small" th:text="${comment.author}">User</span>
+                                        <small class="text-muted"
+                                            th:text="${#temporals.format(comment.createdDate, 'MM.dd HH:mm')}">Date</small>
+                                    </div>
+                                    <p class="mb-0 small text-break" th:text="${comment.content}">Comment</p>
+                                </div>
+                            </div>
+                            <div th:if="${board.comments.empty}" class="text-center text-muted py-3 small">
+                                작성된 댓글이 없습니다.
+                            </div>
+                        </div>
+
+                        <!-- Form -->
+                        <form th:if="${session.user != null}" action="/board/comment/add" method="post"
+                            class="d-flex gap-2">
+                            <input type="hidden" name="boardId" th:value="${board.id}">
+                            <textarea class="form-control" name="content" rows="2" placeholder="댓글을 입력하세요..."
+                                style="resize: none;" required></textarea>
+                            <button type="submit" class="btn btn-primary px-4">등록</button>
+                        </form>
+                        <div th:if="${session.user == null}" class="text-center bg-light p-3 rounded small">
+                            댓글 작성은 <a href="/login" class="fw-bold text-decoration-none">로그인</a>이 필요합니다.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

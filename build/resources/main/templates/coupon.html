@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{fragments/layout}">
+
+<head>
+    <title>이벤트 - Securecorp Mall</title>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <!-- Event Banner Section -->
+        <div class="bg-light py-5 mb-5 text-center"
+            style="background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);">
+            <div class="container fade-in">
+                <span class="badge bg-danger rounded-pill px-3 py-2 mb-3 shadow-sm">Limited Time Offer</span>
+                <h1 class="display-4 fw-bold text-dark mb-3">🎉 선착순 10명 한정 특가!</h1>
+                <p class="lead text-muted mb-4">지금 바로 50% 할인 쿠폰을 다운로드하세요.<br>놓치면 후회할 특별한 기회입니다.</p>
+                <div class="d-flex justify-content-center align-items-center gap-2">
+                    <span class="fs-4 fw-bold text-danger"
+                        th:text="'남은 수량: ' + ${coupon.remainingCount} + '개'">100개</span>
+                    <span class="fs-4 fw-bold text-primary ms-3" th:text="'내 쿠폰: ' + ${myCouponCount} + '장'">0장</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mb-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                        <div class="card-body p-5 text-center">
+                            <i class="bi bi-ticket-perforated-fill text-danger display-1 mb-4"></i>
+                            <h3 class="fw-bold mb-3">50% 할인 쿠폰</h3>
+                            <p class="text-muted mb-4">
+                                전 상품 적용 가능!<br>
+                                1인당 1매만 발급 가능합니다. 서두르세요!
+                            </p>
+
+                            <form id="couponForm">
+                                <!-- HIDDEN IDOR VECTOR -->
+                                <input type="hidden" id="username" name="username" th:value="${currentUsername}">
+
+                                <div class="d-grid gap-2">
+                                    <button type="button" onclick="issueCoupon()"
+                                        class="btn btn-dark btn-lg rounded-pill py-3">
+                                        <i class="bi bi-download me-2"></i> 쿠폰 발급받기
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Reset Button for Testing -->
+                            <div class="mt-3">
+                                <button type="button" onclick="resetEvent()"
+                                    class="btn btn-outline-secondary btn-sm rounded-pill">
+                                    <i class="bi bi-arrow-counterclockwise"></i> 이벤트 리셋 (테스트용)
+                                </button>
+                            </div>
+
+                            <div id="result" class="mt-4 fw-bold min-h-20"></div>
+
+                        </div>
+                        <div class="card-footer bg-light text-center py-3 text-muted small">
+                            * 본 이벤트는 사정에 의해 조기 종료될 수 있습니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function issueCoupon() {
+                var username = document.getElementById("username").value;
+                var resultDiv = document.getElementById("result");
+                var btn = document.querySelector("#couponForm button");
+
+                if (username == "") {
+                    // 간단한 프론트 체크 (로그인 유도)
+                    alert("로그인이 필요합니다.");
+                    location.href = "/login";
+                    return;
+                }
+
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>처리중...';
+
+                fetch('/api/coupon/issue', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'username=' + username
+                })
+                    .then(response => response.text())
+                    .then(data => {
+                        resultDiv.innerText = data;
+                        if (data.includes("축하합니다")) {
+                            resultDiv.className = "mt-4 fw-bold text-success fade-in";
+                            // 성공 효과 (폭죽 등) 대신 간단한 UI 피드백
+                        } else {
+                            resultDiv.className = "mt-4 fw-bold text-danger fade-in";
+                        }
+                        // 개수 갱신을 위해 1초 뒤 새로고침 (선택)
+                        setTimeout(() => location.reload(), 1500);
+                    })
+                    .catch(error => {
+                        resultDiv.innerText = "에러 발생: " + error;
+                        resultDiv.className = "mt-4 fw-bold text-danger";
+                    })
+                    .finally(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="bi bi-download me-2"></i> 쿠폰 발급받기';
+                    });
+            }
+
+            function resetEvent() {
+                if (!confirm("정말 이벤트를 리셋하시겠습니까?\n모든 발급 내역이 삭제되고 수량이 10개로 초기화됩니다.")) return;
+
+                fetch('/admin/coupon/reset')
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data);
+                        location.reload();
+                    });
+            }
+        </script>
+
+        <style>
+            .min-h-20 {
+                min-height: 1.5rem;
+            }
+
+            .fade-in {
+                animation: fadeIn 0.5s ease-in;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        </style>
+    </div>
+</body>
+
+</html>

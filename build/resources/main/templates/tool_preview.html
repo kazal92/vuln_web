@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/layout :: head}"></th:block>
+    <title>시스템 알림 설정 | SECURECORP</title>
+    <style>
+        .page-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .config-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            padding: 1.5rem;
+            height: 100%;
+        }
+
+        .preview-pane {
+            background-color: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 2rem;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .template-input {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .template-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .guide-box {
+            background-color: #f0f9ff;
+            border-left: 4px solid #0ea5e9;
+            padding: 1rem;
+            font-size: 0.875rem;
+            color: #0369a1;
+        }
+
+        .btn-save {
+            background-color: #1e293b;
+            color: white;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+        }
+
+        .btn-save:hover {
+            background-color: #334155;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
+
+    <div class="container py-4">
+        <div class="page-header d-flex align-items-center gap-3">
+            <a href="/admin" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> 관리 센터</a>
+            <h2 class="mb-0 fw-bold">자동 발송 알림 커스터마이징</h2>
+        </div>
+
+        <div class="row g-4">
+            <!-- Form Area -->
+            <div class="col-lg-6">
+                <div class="config-card shadow-sm">
+                    <div class="mb-4 d-flex align-items-center justify-content-between">
+                        <h5 class="fw-bold mb-0"><i class="bi bi-pencil-square me-2"></i>메시지 템플릿 설계</h5>
+                    </div>
+
+                    <form action="/tools/preview" method="post">
+                        <div class="mb-4">
+                            <label for="template"
+                                class="form-label small fw-bold text-muted text-uppercase mb-2">Editor</label>
+                            <textarea class="form-control template-input" id="template" name="template" rows="12"
+                                placeholder="예: 안녕하세요, ${user.name}님! 주문이 완료되었습니다." th:text="${template}"></textarea>
+                        </div>
+
+                        <div class="guide-box mb-4">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            <strong>전문적인 문구 사용:</strong> 고객에게 신뢰를 줄 수 있는 정중한 표현을 사용해 주세요. 치환자(`#{}`)는 시스템 예약어로 작동합니다.
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="reset" class="btn btn-light border flex-grow-1">초기화</button>
+                            <button type="submit" class="btn btn-save flex-grow-1">
+                                <i class="bi bi-check-circle me-1"></i> 저장 및 렌더링 검사
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Preview Area -->
+            <div class="col-lg-6">
+                <div class="config-card shadow-sm d-flex flex-column">
+                    <h5 class="fw-bold mb-4"><i class="bi bi-eye-fill me-2 text-muted"></i>수신자 관점 실시간 미리보기</h5>
+
+                    <div class="preview-pane flex-grow-1 bg-white border border-opacity-10">
+                        <div th:if="${result}" class="w-100 h-100">
+                            <div class="p-4 bg-light rounded shadow-inner"
+                                style="min-height: 250px; font-size: 1.1rem; border: 1px solid #e2e8f0;">
+                                <span th:text="${result}" style="white-space: pre-wrap;"></span>
+                            </div>
+                            <div class="mt-3 text-end"><small class="text-muted"><i class="bi bi-clock"></i> 방금 전
+                                    생성됨</small></div>
+                        </div>
+
+                        <div th:unless="${result}" class="text-center opacity-50">
+                            <i class="bi bi-phone fs-1 d-block mb-3 text-muted"></i>
+                            <p class="mb-1">렌더링 준비 완료</p>
+                            <small>좌측에서 템플릿을 입력하고 버튼을 눌러주세요.</small>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 p-3 bg-light rounded-3 small text-muted">
+                        <i class="bi bi-shield-lock-fill me-1"></i> 본 도구는 내부 관리 전용이며, 모든 변경 사항은 감사 로그(Execution Log)에 영구
+                        기록됩니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+
+</html>
